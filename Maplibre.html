@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Semantic UI CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+  <!-- Semantic UI JS (optional, needed if you want JS interactions like dropdowns, modals, etc.) -->
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+  <script src="ChPE_data.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js"></script>
+
+  <style>
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* prevent scrollbars */
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+      position: relative; /* Make it a positioning context */
+    }
+    .layer-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+      max-height: 90%;
+      overflow-y: auto;
+      font-family: sans-serif;
+      font-size: 14px;
+      z-index: 1; /* Ensure it stays on top of the map */
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      border-radius: 4px;
+    }
+    .sidebar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      background: white;
+      border-right: 1px solid #ccc;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      z-index: 10;
+      transform: translateX(0); /* visible by default */
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar.collapsed {
+      transform: translateX(-300px);
+    }
+    .sidebar-toggle {
+      position: absolute;
+      top: 10px;
+      right: -40px;
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-left: none;
+      cursor: pointer;
+      z-index: 11;
+      border-radius: 0 4px 4px 0;
+      font-size: 18px;
+    }
+    .sidebar-box {
+      background: #f0f0f0;           /* Light gray */
+      border: 1px solid #ccc;        /* Optional subtle border */
+      border-radius: 4px;
+      padding: 10px;
+      margin: 10px;
+      font-family: sans-serif;
+      font-size: 14px;
+    }
+    .ui.buttons {
+      display: flex !important;
+      justify-content: center !important;
+      gap: 0.5em; /* optional: space between buttons */
+    }
+  </style>
+</head>
+
+<body>
+<div id="map">
+  <div id="sidebar" class="sidebar">
+    <button id="sidebarToggle" class="sidebar-toggle">&#x2630</button>
+    <div class="sidebar-box">
+      <div class="ui large buttons">
+        <button id="btnLTS" class="ui button active">LTS Rating</button>
+        <div class="or"></div>
+        <button id="btnPRI" class="ui button">Priority</button>
+      </div>
+    </div>
+    <div class="sidebar-box">This is box 2</div>
+    <div class="sidebar-box">This is box 3</div>
+  </div>
+  <div id="layerControl" class="layer-toggle"></div>
+</div>
+
+<script type="text/javascript">
+  // INJECT HERE
+  const polylines = polylines_text.split(";");
+  const osm_id = osm_id_text.split(",");
+  const names_list = names.split(" ");
+  const highways_list = highways.split(" ");
+
+  let mapLayers = []; // Track added layer IDs
+  let currentData = "LTS"; // Track current dataset: "LTS" or "PRI"
+
+  // Initialize map
+  const map = new maplibregl.Map({
+    container: "map",
+    style: {
+      version: 8,
+      sources: {},
+      layers: []
+    },
+    center: centre, // [lon, lat]
+    zoom: 13,
+    maxBounds: [
+      [centre[0]-1, centre[1]-1],
+      [centre[0]+1, centre[1]+1]
+    ]
+  });
+
+  // Clear all overlay layers and sources
+  function clearLayers() {
+    for (const layerId of mapLayers) {
+      if (map.getLayer(layerId)) map.removeLayer(layerId);
+      if (map.getSource(layerId)) map.removeSource(layerId);
+    }
+    mapLayers = [];
+    // Clear legend UI
+    const layerControlDiv = document.getElementById("layerControl");
+    layerControlDiv.innerHTML = "";
+  }
+
+  // Build features for a dataset and add layers + legend
+  function buildMapLayers(values, legend) {
+    clearLayers();
+
+    // Map legend key to index
+    const index = {};
+    for (let i = 0; i < legend.length; i++) {
+      index[legend[i][0]] = i;
+    }
+
+    // Prepare FeatureCollections for each legend layer
+    const featuresByLayer = [];
+    for (let i = 0; i < legend.length; i++) {
+      featuresByLayer.push({
+        type: "FeatureCollection",
+        features: []
+      });
+    }
+
+    // Build features per value
+    for (let i = 0; i < values.length; i++) {
+      const j = index[values[i]];
+      if (j === undefined) continue; // Skip if no match in legend
+
+      const PL = [];
+      for (const pt_text of polylines[i].split(" ")) {
+        const xy = pt_text.split(",");
+        PL.push([
+          centre[0] + parseInt(xy[0], 36) / 1000000.0, // lon
+          centre[1] + parseInt(xy[1], 36) / 1000000.0  // lat
+        ]);
+      }
+
+      const n = name_ix[i];
+      const h = highway_ix[i];
+      const o = parseInt(osm_id[i], 36).toString();
+
+      let popupContent = "<p>";
+      if (n > -1)
+        popupContent += "<b>" + names_list[n].replace("_", " ") + "</b><br>";
+      if (h > -1)
+        popupContent += highways_list[h].replace("_", " ") + "<br>";
+      popupContent +=
+        'OSM Id <b><a target="_blank" href="https://www.openstreetmap.org/way/' +
+        o +
+        '">' +
+        o +
+        "</a></b><br>";
+      popupContent += "Lanes <b>" + lanes[i].toString() + "</b><br>";
+      popupContent += "Speed Limit <b>" + kph[i].toString() + "</b> km/h<br>";
+      if (oneway[i] > 0) popupContent += "one way<br>";
+      if (bridge[i] > 0) popupContent += "bridge<br>";
+      if (tunnel[i] > 0) popupContent += "tunnel<br>";
+      if (streetparking[i] > 0) popupContent += "street parking<br>";
+      popupContent += "</p>";
+
+      featuresByLayer[j].features.push({
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: PL
+        },
+        properties: {
+          popup: popupContent,
+          color: legend[j][2],
+          weight: 2
+        }
+      });
+    }
+
+    // Add sources and layers to map and create legend checkboxes
+    const layerControlDiv = document.getElementById("layerControl");
+    for (let i = 0; i < legend.length; i++) {
+      const layerId = "overlay-layer-" + i;
+      mapLayers.push(layerId);
+
+      map.addSource(layerId, {
+        type: "geojson",
+        data: featuresByLayer[i]
+      });
+
+      map.addLayer({
+        id: layerId,
+        type: "line",
+        source: layerId,
+        layout: { visibility: "visible" },
+        paint: {
+          "line-color": ["get", "color"],
+          "line-width": ["get", "weight"]
+        }
+      });
+
+      // Popup on click
+      map.on("click", layerId, (e) => {
+        const props = e.features[0].properties;
+        new maplibregl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(props.popup)
+          .addTo(map);
+      });
+
+      // Cursor pointer on hover
+      map.on("mouseenter", layerId, () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", layerId, () => {
+        map.getCanvas().style.cursor = "";
+      });
+
+      // Legend checkbox UI
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = "chk-" + i;
+      checkbox.dataset.layerId = layerId;
+      checkbox.checked = true;
+      checkbox.onchange = (ev) => {
+        const lid = ev.target.dataset.layerId;
+        map.setLayoutProperty(
+          lid,
+          "visibility",
+          ev.target.checked ? "visible" : "none"
+        );
+      };
+
+      const labelHtml =
+        '<span style="color:' +
+        legend[i][2] +
+        '"><b>' +
+        legend[i][1] +
+        "</b></span>";
+      const lbl = document.createElement("label");
+      lbl.htmlFor = checkbox.id;
+      lbl.innerHTML = " " + labelHtml;
+
+      const container = document.createElement("div");
+      container.appendChild(checkbox);
+      container.appendChild(lbl);
+
+      layerControlDiv.appendChild(container);
+    }
+  }
+
+  // Initialize with LTS data after map loads
+  map.on("load", () => {
+    // Add base raster tile layer
+    map.addSource("raster-tiles", {
+      type: "raster",
+      tiles: [
+        "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+      ],
+      tileSize: 256,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    });
+    map.addLayer({
+      id: "raster-tiles-layer",
+      type: "raster",
+      source: "raster-tiles",
+      paint: {}
+    });
+
+    buildMapLayers(lts_values, lts_legend);
+
+    map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+  });
+
+  // Sidebar toggle logic
+  const sidebar = document.getElementById("sidebar");
+  const toggleButton = document.getElementById("sidebarToggle");
+
+  toggleButton.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+  });
+
+  // Buttons for switching datasets
+  const btnLTS = document.getElementById("btnLTS");
+  const btnPRI = document.getElementById("btnPRI");
+
+  btnLTS.addEventListener("click", () => {
+    if (currentData === "LTS") return; // Already active, do nothing
+    currentData = "LTS";
+
+    btnLTS.classList.add("active");
+    btnPRI.classList.remove("active");
+
+    buildMapLayers(lts_values, lts_legend);
+  });
+
+  btnPRI.addEventListener("click", () => {
+    if (currentData === "PRI") return; // Already active, do nothing
+    currentData = "PRI";
+
+    btnPRI.classList.add("active");
+    btnLTS.classList.remove("active");
+
+    buildMapLayers(pri_values, pri_legend);
+  });
+</script>
+</body>
+</html>
