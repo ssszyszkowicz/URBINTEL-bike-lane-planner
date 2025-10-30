@@ -14,25 +14,25 @@ In order to produce a HTML map, you will need to run website_js.py once the simu
 
 We use the 2016 Canadian census, since we found the 2021 census to contain missing population data for some "Dissemination Areas" (DAs).
 
-- Requires census geometry of DAs: lda_000b16a_e files:
+1. Requires census geometry of DAs: lda_000b16a_e files:
 
 https://www12.statcan.gc.ca/census-recensement/alternative_alternatif.cfm?l=eng&dispext=zip&t=lda_000b16a_e.zip&k=%20%20%20%2090414&loc=http://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/files-fichiers/2016/lda_000b16a_e.zip
 
 
-- Requires population counts for each DA (2016 census), as .csv:
+2. Requires population counts for each DA (2016 census), as .csv:
 
 https://hub.arcgis.com/datasets/esrica-tsg::canadian-population-dwelling-counts-by-dissemination-area-2016/explore
 
 
-- Requires the province OSM extract, properly named as #province#-latest, as .osm.pbf:
+3. Requires the province OSM extract, properly named as #province#-latest, as .osm.pbf:
 
 https://download.geofabrik.de/north-america/canada.html
 
 - Make a folder/file structure as so:
-C:/data/
-	> Canada > DAs: all DA information unzipped here
-		 > topography : empty folder for topog. downloads
-	> PE: .osm.pbf file here - simulator will store all intermediary results here for all cities from Prince Edward Island.
+C:/data/Canada/DAs: all DA information (steps 1 and 2) unzipped here.
+C:/data/Canada/topography : empty folder for topog. downloads.
+C:/data/PE: .osm.pbf file here (step 3) - simulator will store all intermediary results here for all cities from Prince Edward Island.
+
 
 
 
