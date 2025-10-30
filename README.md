@@ -7,7 +7,7 @@ The simulator is set up to run for the city of Charlottetown in the province of 
 
 Once the simulation is finished (will take several hours), a GUI with maps will appear. You can navigate the maps using the three <>? keys. 
 
-In order to produce a HTML map, you will need to run website_js.py once the simulation has finished. This will produce the ChPE_data.js file that you already have. Open Maplibre.html, which reads from that file. "Priority" shows the most needed bike lanes (protected) by the city according to the algorithm. 
+In order to produce a HTML map, you will need to run website_js.py once the simulation has finished. This will produce the ChPE_data.js file (that you already have). Open Maplibre.html, which reads from that file. "Priority" shows the most needed bike lanes (protected) by the city according to the algorithm. 
 
 ---
 
@@ -32,5 +32,6 @@ Make a folder/file structure as so:
 C:/data/Canada/DAs: all DA information (steps 1 and 2) unzipped here.
 C:/data/Canada/topography : empty folder for topography downloads. These are done automatically by the simulator for Canada (NRCan data).
 C:/data/PE: .osm.pbf file here (step 3) - simulator will store all intermediary results here for all cities from Prince Edward Island.
+
 
 
