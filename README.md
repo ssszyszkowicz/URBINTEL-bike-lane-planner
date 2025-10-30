@@ -34,4 +34,30 @@ C:/data/Canada/topography : empty folder for topography downloads. These are don
 C:/data/PE: .osm.pbf file here (step 3) - simulator will store all intermediary results here for all cities from Prince Edward Island.
 
 
+---
+
+
+- MAIN.py 
+Entry point of the simulator. Runs a sequence of functions that make up the program, each starting with "main_".
+
+- qcommands.py
+An attempt at expanding Python & numpy with some useful macros, all starting with "Q". 
+
+- interactive.py
+At the end of the simulation, the program displays a GUI written in OpenGL. Navigate the map with AWSDZX, change map layer with <>, turn road types on/off with numbers.
+
+- UrbNet.py 
+Contains low-level routing: Network, TNodes, TRoads objects make the topological network, the Graph object extracts a graph that can be routed using Dijkstra. Idea: rewriting Dijkstra using OpenCL would greatly accelerate the simulation, even when Dijkstra is used just without predecessors.
+"Anchors" are where the residential and work locations are attached to the Network.  
+
+- conflation.py
+Allows importing bike lane Shapefiles to add updated bike lanes to the existing OSM data.  
+
+- gGlobals.py 
+Contains global configuration settings, colour palettes, etc. as well as OpenCL material. The entire simulator runs at the high level over a global dictionary of variables passed to the functions starting with "main_".
+
+- earth.py
+Contains functions to convert projections. We project the local earth onto a flat trapezoid. Geometry objects are handled by the Geometry object, that can store both lon-lat and trapezoid x-y (meter) coordinates conveniently.
+
+
 
