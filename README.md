@@ -5,7 +5,7 @@ The simulator runs from MAIN.py.
 Not all the requirements are listed - you will have to find them yourself, sorry :(
 The simulator is set up to run for the city of Charlottetown in the province of Prince Edward Island (code PE).
 
-Once the simulation is finished (will take several hours), a GUI with maps will appear. You can navigate the maps using the three <>? keys. 
+Once the simulation is finished (will take several hours), a GUI with maps will appear. You can navigate the maps using the AWSDZX<> keys. 
 
 In order to produce a HTML map, you will need to run website_js.py once the simulation has finished. This will produce the ChPE_data.js file (that you already have). Open Maplibre.html, which reads from that file. "Priority" shows the most needed bike lanes (protected) by the city according to the algorithm. 
 
@@ -58,6 +58,7 @@ Contains global configuration settings, colour palettes, etc. as well as OpenCL 
 
 - earth.py
 Contains functions to convert projections. We project the local earth onto a flat trapezoid. Geometry objects are handled by the Geometry object, that can store both lon-lat and trapezoid x-y (meter) coordinates conveniently.
+
 
 
 
