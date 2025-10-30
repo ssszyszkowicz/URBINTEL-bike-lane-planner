@@ -28,12 +28,9 @@ https://hub.arcgis.com/datasets/esrica-tsg::canadian-population-dwelling-counts-
 
 https://download.geofabrik.de/north-america/canada.html
 
-- Make a folder/file structure as so:
+Make a folder/file structure as so:
 C:/data/Canada/DAs: all DA information (steps 1 and 2) unzipped here.
-C:/data/Canada/topography : empty folder for topog. downloads.
+C:/data/Canada/topography : empty folder for topography downloads. These are done automatically by the simulator for Canada (NRCan data).
 C:/data/PE: .osm.pbf file here (step 3) - simulator will store all intermediary results here for all cities from Prince Edward Island.
-
-
-
 
 
