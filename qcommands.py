@@ -16,14 +16,6 @@ from keyword import iskeyword as keyword_iskeyword
 
 
 
-
-
-
-if 0:
-    print("Q is the best - you will all be assimilated into Q.")
-    print("In America, you call functions in Python. In Soviet Python, Q calls YOU!")
-    print("In Soviet XYZ, hackers type faster than YOU!")
-
 def Qdisp(obj):
     for p in dir(obj):
         if not p.startswith('__'):
@@ -733,6 +725,7 @@ def Qnew(obj, expr):
 ##            if Qtype(v) == 'function': v = v()
 ##            Qset(dest,n,v)
 ##        else: Qer('Bad item',C,'in Qinit().')
+
 
 
 
