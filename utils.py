@@ -1,8 +1,4 @@
-# Prov23: Buy truth; do not sell it.
-
-
-
-# global os os.path imports
+# these are global os, os.path, sys imports
 from os import name as os_name, mkdir as os_mkdir, makedirs as os_makedirs
 from os import devnull as os_devnull, listdir as os_listdir, getcwd as os_getcwd, walk as os_walk
 from os import system as os_system
