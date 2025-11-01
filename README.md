@@ -1,9 +1,9 @@
 URBINTEL is an automated bike lane planning software, written in Python and some embedded OpenCL. 
 
 
-The simulator runs from MAIN.py.
-Not all the requirements are listed - you will have to find them yourself, sorry :(
+The simulator runs from MAIN.py. The main function call is on the last line of that file. 
 The simulator is set up to run for the city of Charlottetown in the province of Prince Edward Island (code PE).
+To run a different city in Canada, download the corresponding province .osm.pbf file, place it in its folder, and edit the call to MAIN() with first parameter like so, for example: ['CA', 'ON', 'Ottawa']. The folder structure will be explained shortly.
 
 Once the simulation is finished (will take several hours), a GUI with maps will appear. You can navigate the maps using the AWSDZX<> keys. 
 
@@ -58,6 +58,7 @@ Contains global configuration settings, colour palettes, etc. as well as OpenCL 
 
 - earth.py
 Contains functions to convert projections. We project the local earth onto a flat trapezoid. Geometry objects are handled by the Geometry object, that can store both lon-lat and trapezoid x-y (meter) coordinates conveniently.
+
 
 
 
