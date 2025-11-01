@@ -9,6 +9,10 @@ Once the simulation is finished (will take several hours), a GUI with maps will 
 
 In order to produce a HTML map, you will need to run website_js.py once the simulation has finished. This will produce the ChPE_data.js file (that you already have). Open Maplibre.html, which reads from that file. "Priority" shows the most needed bike lanes (protected) by the city according to the algorithm. 
 
+This code was tested using Python 3.13 - hopefully I've listed all the requirements, but if any are missing, I apologize - see the error messages and install the missing packages manually. 
+
+
+
 ---
 
 
@@ -58,6 +62,7 @@ Contains global configuration settings, colour palettes, etc. as well as OpenCL 
 
 - earth.py
 Contains functions to convert projections. We project the local earth onto a flat trapezoid. Geometry objects are handled by the Geometry object, that can store both lon-lat and trapezoid x-y (meter) coordinates conveniently.
+
 
 
 
