@@ -66,6 +66,8 @@ Contains global configuration settings, colour palettes, etc. as well as OpenCL 
 - earth.py
 Contains functions to convert projections. We project the local earth onto a flat trapezoid. Geometry objects are handled by the Geometry object, that can store both lon-lat and trapezoid x-y (meter) coordinates conveniently.
 
+- etc.
+
 
 
 
