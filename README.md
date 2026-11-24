@@ -9,7 +9,7 @@ Once the simulation is finished (will take several hours), a GUI with maps will 
 
 In order to produce a HTML map, you will need to run website_js.py once the simulation has finished, with the variables CITY and PROV set to the correct names inside that website_js.py file. This will produce the ChPE_data.js file (that you already have) in the Python code folder. Open Maplibre.html, which reads from that file. "Priority" shows the most needed bike lanes (protected) by the city according to the algorithm. In order to give the map to some other user, you will need to give them both the ChPE_data.js and the Maplibre.html files, and have them both in the same directory to open Maplibre.html correctly.
 
-This code was tested using Python 3.13 - hopefully I've listed all the requirements, but if any are missing, I apologize - see the error messages and install the missing packages manually. 
+This code was tested using Python 3.13 and may not work with newer versions of Python - hopefully I've listed all the requirements, but if any are missing, I apologize - see the error messages and install the missing packages manually. 
 
 
 
