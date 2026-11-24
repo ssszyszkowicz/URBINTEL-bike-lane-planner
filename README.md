@@ -7,7 +7,7 @@ To run a different city in Canada, download the corresponding province .osm.pbf 
 
 Once the simulation is finished (will take several hours), a GUI with maps will appear. You can navigate the maps using the AWSDZX<> keys. 
 
-In order to produce a HTML map, you will need to run website_js.py once the simulation has finished. This will produce the ChPE_data.js file (that you already have). Open Maplibre.html, which reads from that file. "Priority" shows the most needed bike lanes (protected) by the city according to the algorithm. 
+In order to produce a HTML map, you will need to run website_js.py once the simulation has finished, with the variables CITY and PROV set to the correct names inside that website_js.py file. This will produce the ChPE_data.js file (that you already have) in the Python code folder. Open Maplibre.html, which reads from that file. "Priority" shows the most needed bike lanes (protected) by the city according to the algorithm. 
 
 This code was tested using Python 3.13 - hopefully I've listed all the requirements, but if any are missing, I apologize - see the error messages and install the missing packages manually. 
 
