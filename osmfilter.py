@@ -615,10 +615,12 @@ def get_lanes(way, fwd = True):
     for k in ['lanes:'+['forward','backward'][1-int(fwd)], 'lanes', 'numlanes']:        
         L = way.get(k)
         if L is not None: return min(4.0, parse_lanes(L, fwd if k.endswith('lanes') else -1))
+    if not motor_allowed(way): return 1.0
     return 2.0#default - BO.js
 
 # maybe redo maxspeed according to getlanes() pattern?
 def get_maxspeed(way, fwd = True):
+    if not motor_allowed(way): return 0
     try:
         def parse_speed(speed):
             sp = speed.lower()
